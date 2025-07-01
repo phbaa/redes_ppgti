@@ -3,7 +3,7 @@ import sys
 from scapy.all import send, IP, TCP, Raw
 
 # --- Configurações ---
-IP_SERVIDOR = "172.20.0.100"
+IP_SERVIDOR = "IP_SERVIDOR"
 PORTA_SERVIDOR = 5000
 INTERVALO_ENTRE_PACOTES = 1
 
