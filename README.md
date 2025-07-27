@@ -124,7 +124,7 @@ http://prometheus:9090
 
 * Cenário testado no Ubuntu22
 * Docker, Docker Compose, Python3 e Mininet devem estar instalados
-* Se necessário executar comandos com sudo.
-* Execute os comandos na ordem para evitar erros.
+* Se necessário executar comandos com sudo
+* Execute os comandos na ordem para evitar erros
 
 ---
