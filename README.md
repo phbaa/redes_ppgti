@@ -32,6 +32,7 @@ docker build -t ubuntu-custom .
 ### 2. Subindo os containers com Docker Compose
 
 ```bash
+find . -type f -name 'add_route_net*' -exec chmod +x {} \;
 docker compose up -d
 ```
 
