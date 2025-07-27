@@ -26,14 +26,14 @@ redes_ppgti/
 
 ```bash
 cd docker
-docker build -t ubuntu-custom .
+sudo docker build -t ubuntu-custom .
 ```
 
 ### 2. Subindo os containers com Docker Compose
 
 ```bash
 find . -type f -name 'add_route_net*' -exec chmod +x {} \;
-docker compose up -d
+sudo docker compose up -d
 ```
 
 ### 3. Atualizando bridges da rede (Mininet)
@@ -50,7 +50,7 @@ chmod +x veth_create.sh
 
 ```bash
 cd ../python
-python3 mininet-network.py
+sudo python3 mininet-network.py
 ```
 
 ---
@@ -61,40 +61,40 @@ python3 mininet-network.py
 ### Servidor
 
 ```bash
-docker exec -it server python3 /conf/socket_tcp_receiver_echo.py
+sudo docker exec -it server python3 /conf/socket_tcp_receiver_echo.py
 ```
 
 ### Cliente URLLC1
 
 ```bash
-docker exec -it urllc1 python3 /conf/socket_tcp_sender_receiver.py
+sudo docker exec -it urllc1 python3 /conf/socket_tcp_sender_receiver.py
 ```
 
 ### Cliente URLLC2
 
 ```bash
-docker exec -it urllc2 python3 /conf/socket_tcp_sender_receiver.py
+sudo docker exec -it urllc2 python3 /conf/socket_tcp_sender_receiver.py
 ```
 
 ### Servidor 2 (iperf)
 
 ```bash
-docker exec -it server2 iperf -s
+sudo docker exec -it server2 iperf -s
 ```
 
 ### Cliente EMBB1 (iperf)
 
 ```bash
-docker exec -it embb1 iperf -t 500 -i 1 -c 172.20.0.101
+sudo docker exec -it embb1 iperf -t 500 -i 1 -c 172.20.0.101
 ```
 
 ### Cliente EMBB2 (iperf)
 
 ```bash
-docker exec -it embb2 iperf -t 500 -i 1 -c 172.20.0.101
+sudo docker exec -it embb2 iperf -t 500 -i 1 -c 172.20.0.101
 ```
 
-### No Mininet
+### No Terminal do Mininet
 
 ```bash
 r1 python3 sniffer-r1.py
@@ -125,9 +125,8 @@ http://prometheus:9090
 
 ## 📌 Observações
 
-* Cenário testado no Ubuntu22
+* Cenário testado no Ubuntu 22.04
 * Docker, Docker Compose, Python3 e Mininet devem estar instalados
-* Se necessário executar comandos com sudo
 * Execute os comandos na ordem para evitar erros
 
 ---
