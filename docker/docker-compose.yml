@@ -1,0 +1,118 @@
+services:
+  host1:
+    image: ubuntu-custom
+    container_name: urllc1
+    networks:
+      net1:
+        ipv4_address: 172.18.0.3
+    expose:
+      - "8000"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/uRLLC-net1:/conf
+    entrypoint: ["/conf/add_route_net1.sh"]
+
+  host2:
+    image: ubuntu-custom
+    container_name: embb1
+    networks:
+      - net1
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/eMBB-net1:/conf
+    entrypoint: ["/conf/add_route_net1.sh"]
+
+  host3:
+    image: ubuntu-custom
+    container_name: urllc2
+    networks:
+      net2:
+        ipv4_address: 172.19.0.3
+    expose:
+      - "8000"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/uRLLC-net2:/conf
+    entrypoint: ["/conf/add_route_net2.sh"]
+
+  host4:
+    image: ubuntu-custom
+    container_name: embb2
+    networks:
+      - net2
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/eMBB-net2:/conf
+    entrypoint: ["/conf/add_route_net2.sh"]
+    
+  server:
+    image: ubuntu-custom
+    container_name: server
+    networks:
+      net3:
+        ipv4_address: 172.20.0.100
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/Server:/conf
+    entrypoint: ["/conf/add_route_net3.sh"]
+
+  server2:
+    image: ubuntu-custom
+    container_name: server2
+    networks:
+      net3:
+        ipv4_address: 172.20.0.101
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/Server2:/conf
+    entrypoint: ["/conf/add_route_net3.sh"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    user: root
+    networks:
+      - net3
+    ports:
+      - "9090:9090"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./volumes/Prometheus/prometheus:/etc/prometheus
+      - ./volumes/Prometheus/conf:/conf
+    entrypoint: ["/conf/add_route_net3.sh"]
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - net3
+
+networks:
+  net1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+  net2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+  net3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

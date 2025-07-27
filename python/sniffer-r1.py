@@ -4,16 +4,14 @@ import time
 import subprocess
 from scapy.all import sniff, Raw
 
-LATENCY_THRESHOLD_MS = 25.0
-HYSTERESIS_MS = 1.0
-MIN_CONSECUTIVE_APPLY = 5
-MIN_CONSECUTIVE_REMOVE = 5
+LATENCY_THRESHOLD_MS = 5.0
+MIN_CONSECUTIVE_APPLY = 3
+MIN_CONSECUTIVE_REMOVE = 100
 
 priority_applied = False
 consecutive_high_latency = 0
 consecutive_low_latency = 0
 
-# Interfaces que este script vai aplicar tc diretamente (no contexto de r1)
 IFACES = ['r1-eth1', 'r1-eth2', 'r1-eth3']
 
 def apply_tc():
@@ -28,8 +26,9 @@ def apply_tc():
     tc qdisc add dev {iface} root handle 1: htb default 20
     tc class add dev {iface} parent 1: classid 1:1 htb rate 1000mbit
     tc class add dev {iface} parent 1:1 classid 1:10 htb rate 800mbit ceil 1000mbit prio 0
-    tc class add dev {iface} parent 1:1 classid 1:20 htb rate 200mbit ceil 1000mbit prio 1
-    tc qdisc add dev {iface} parent 1:10 handle 10: fq_codel limit 30
+    tc class add dev {iface} parent 1:1 classid 1:20 htb rate 200mbit ceil 300mbit prio 1
+    tc qdisc add dev {iface} parent 1:10 handle 10: fq_codel limit 50
+    tc qdisc add dev {iface} parent 1:20 handle 20: fq_codel limit 40
     tc filter add dev {iface} protocol ip parent 1:0 prio 1 u32 match ip dport 5000 0xffff flowid 1:10
     '''
 
@@ -55,15 +54,21 @@ def process_packet(pkt):
 
     if Raw in pkt:
         try:
-            sent_ts = float(pkt[Raw].load.decode())
-            now = time.time()
-            latency = (now - sent_ts) * 1000
-            print(f"[LATÊNCIA] {latency:.3f} ms")
+            # Timestamp enviado é um número inteiro em nanossegundos
+            sent_ts_ns = int(pkt[Raw].load.decode())
+            
+            # Tempo de recepção em nanossegundos
+            recv_ts_ns = int(pkt.time * 1_000_000_000)
+            
+            # Calcula latência em milissegundos
+            latency = (recv_ts_ns - sent_ts_ns) / 1_000_000
+            
+            print(f"Latência: {latency:.2f} ms")
 
             if latency > LATENCY_THRESHOLD_MS:
                 consecutive_high_latency += 1
                 consecutive_low_latency = 0
-            elif latency < (LATENCY_THRESHOLD_MS - HYSTERESIS_MS):
+            elif latency < LATENCY_THRESHOLD_MS:
                 consecutive_low_latency += 1
                 consecutive_high_latency = 0
             else:
@@ -81,7 +86,7 @@ def process_packet(pkt):
 def main():
     print("Monitorando latência URLLC com tc em várias interfaces...")
 
-    sniff(filter="tcp port 5000", prn=process_packet, store=0)
+    sniff(filter="tcp src port 5000", prn=process_packet, store=0)
 
 if __name__ == '__main__':
     main()
