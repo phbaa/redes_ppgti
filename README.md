@@ -109,7 +109,7 @@ r1 python3 sniffer-r1.py
 
    * Usuário: `admin`
    * Senha: `admin`
-3. No menu lateral, vá em **Connections > Data sources > Add new data sources**
+3. No menu lateral, vá em **Connections > Data sources > Add data source**
 4. Selecione **Prometheus**
 5. Em **Connection > Prometheus server URL**, preencha:
 
