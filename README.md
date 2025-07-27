@@ -40,7 +40,9 @@ docker compose up -d
 
 ```bash
 cd ../shell
+chmod +x atualiza_bridges.sh
 ./atualiza_bridges.sh
+chmod +x veth_create.sh
 ./veth_create.sh
 ```
 
