@@ -15,7 +15,7 @@ INTERVALO = 1                 # Intervalo entre cada medição (segundos)
 # -------------------------
 
 # Gauge: métrica do tipo que pode aumentar ou diminuir (útil para latência)
-rtt_gauge = Gauge('rtt_urllc2_ms', 'Round-Trip Time (RTT) em milissegundos')
+rtt_gauge = Gauge('rtt_urllc1_ms', 'Round-Trip Time (RTT) em milissegundos')
 
 # -------------------------
 # FUNÇÃO PRINCIPAL DO CLIENTE

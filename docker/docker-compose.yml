@@ -3,10 +3,7 @@ services:
     image: ubuntu-custom
     container_name: urllc1
     networks:
-      net1:
-        ipv4_address: 172.18.0.3
-    expose:
-      - "8000"
+      - net1
     cap_add:
       - NET_ADMIN
     volumes:
@@ -28,10 +25,7 @@ services:
     image: ubuntu-custom
     container_name: urllc2
     networks:
-      net2:
-        ipv4_address: 172.19.0.3
-    expose:
-      - "8000"
+      - net2
     cap_add:
       - NET_ADMIN
     volumes:
@@ -79,8 +73,6 @@ services:
     user: root
     networks:
       - net3
-    ports:
-      - "9090:9090"
     cap_add:
       - NET_ADMIN
     volumes:
